@@ -1,0 +1,8 @@
+{
+    "user": "addr1q8c8y582z9sneag7e75xstmr0lem0z6e2atyt0sqf6axz0syydsh4rjtkg43kx6pggueuqtwxgjxfhcdqwv56q606meqeu2axn",
+    "tankuseraddr": "addr1zxawwulvmw4mw3kjmntazcc22as3szcewe5q8w9xt7jjjqtvpx5m854eg3jzke9xuv0fkjr32hrnhpdweumq2kfxth0qg62m0m",
+    "stake_amount": 30000000000,
+    "staker_nft_name": "099ca684ed63102d8495f7c71d10bcc8eff1a4357e8c7955f26c92f8",
+    "staker_redeemer_cbor": "d87985d87982d87981581c60fdb6f77513a351958197d826965f116aa83fc572a244b97ad4885bd87981d87981d87981581c6c09a9b3d2b944642b64a6e31e9b487155c73b85aecf360559265dded87982d87981581ce22b767109bb46668f01089041cf684b4735bb61a4ab7c140daead99d87981d87981d87981581c099ca684ed63102d8495f7c71d10bcc8eff1a4357e8c7955f26c92f8000001",
+    "signer_hash": "6c09a9b3d2b944642b64a6e31e9b487155c73b85aecf360559265dde"
+}

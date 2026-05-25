@@ -1,0 +1,11 @@
+{
+    "user": "addr1q8c8y582z9sneag7e75xstmr0lem0z6e2atyt0sqf6axz0syydsh4rjtkg43kx6pggueuqtwxgjxfhcdqwv56q606meqeu2axn",
+    "tankuseraddr": "addr1z8uhynz89x08gh95758e6dkthtwdlplqzk5an8vj0hzwse4kgp6cvghl8fhekj4h24upncc5mm4duk7p8vzl7r5fhv3s3v7f0y",
+    "tank_ada": 4000000,
+    "owner_payment_hash": "f07250ea11613cf51ecfa8682f637ff3b78b59575645be004eba613e",
+    "owner_stake_hash": "0423617a8e4bb22b1b1b4142399e016e322464df0d03994d034fd6f2",
+    "empty_bytes": "",
+    "execution_time": 1742770540416,
+    "scheduled_ada": 2000000,
+    "reward_ada": 1000000
+}

@@ -1,0 +1,13 @@
+{
+    "batcher": "addr1q8c8y582z9sneag7e75xstmr0lem0z6e2atyt0sqf6axz0syydsh4rjtkg43kx6pggueuqtwxgjxfhcdqwv56q606meqeu2axn",
+    "user": "addr1q8c8y582z9sneag7e75xstmr0lem0z6e2atyt0sqf6axz0syydsh4rjtkg43kx6pggueuqtwxgjxfhcdqwv56q606meqeu2axn",
+    "tankuseraddr": "addr1z8uhynz89x08gh95758e6dkthtwdlplqzk5an8vj0hzwse4kgp6cvghl8fhekj4h24upncc5mm4duk7p8vzl7r5fhv3s3v7f0y",
+    "tank_utxo": "ceaa2bcba90105401a8e8ca88c06f3d87ed3e16f7ebcd2bc94e33225c9086272#0",
+    "staker_ref": "3d640e597bd7470abf9efd15ed45c60f5e1d71dc038a5ffa7795ecfe97786dc7#0",
+    "batcher_addr_cbor": "00",
+    "batcher_signer_hash": "75420dfe3cd874a15f340a0716c83dd848a769038e247979ef6ea30c",
+    "ref_staking_idx": 0,
+    "ref_params_idx": 2,
+    "dest_ada": 2000000,
+    "reward_ada": 1000000
+}
