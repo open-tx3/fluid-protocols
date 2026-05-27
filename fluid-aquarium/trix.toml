@@ -1,10 +1,11 @@
 [protocol]
 name = "fluid-aquarium"
-scope = "fluidtokens"
+scope = "open-tx3"
 version = "0.1.0"
 description = "Babel fees and scheduled transactions on Cardano by FluidTokens"
 main = "main.tx3"
 readme = "README.md"
+repository = "https://github.com/open-tx3/fluid-protocols"
 
 [ledger]
 family = "cardano"
