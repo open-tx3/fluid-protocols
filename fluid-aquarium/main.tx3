@@ -9,50 +9,53 @@
 
 // --- Parties ---
 
-// The user creating/managing a tank
+/// The user creating/managing a tank.
 party User;
 
-// Tank spend validator address (holds tank UTxOs)
 // On-chain: addr1z... (script payment + user staking credential)
+/// Tank spend validator address that holds tank UTxOs.
 party TankUserAddr;
 
-// Tank validator (enterprise addr, no staking cred — for ref script)
+/// Tank validator at an enterprise address (no staking cred) used for the ref script.
 party TankScript;
 
-// Oracle reward address (stake address for withdrawal-based oracle validation)
+/// Oracle reward (stake) address used for withdrawal-based oracle validation.
 party OracleScript;
 
-// Rewards treasury address (receives batcher rewards)
+/// Rewards treasury address that receives batcher rewards.
 party RewardsAddr;
 
-// Batcher node operator
+/// Batcher / Aquarium node operator that executes scheduled txs and babel fees.
 party Batcher;
 
 // --- Environment ---
 
 env {
-    // Tank contract ref script UTxO
+    /// UTxO carrying the tank contract reference script.
     tank_ref: UtxoRef,
 
-    // Parameters contract NFT UTxO (used as reference input)
+    /// Parameters contract NFT UTxO used as a reference input.
     params_ref: UtxoRef,
 
-    // Oracle contract script hash (for withdrawal-based oracle validation)
+    /// Oracle contract script hash for withdrawal-based oracle validation.
     oracle_script_hash: Bytes,
 
-    // FLDT token (CIP-68 user token)
+    /// FLDT token policy id (CIP-68 user token).
     fldt_policy: Bytes,
+    /// FLDT token asset name (CIP-68 user token).
     fldt_name: Bytes,
 
-    // Staker contract script hash (for node staking)
+    /// Staker contract script hash for node staking.
     staker_policy: Bytes,
 
-    // Parameters contract script hash (for NFT identification)
+    /// Parameters contract script hash for NFT identification.
     params_policy: Bytes,
+    /// Parameters NFT asset name used to identify the params UTxO.
     params_nft_name: Bytes,
 
-    // Oracle reference UTxOs (stable deployment artifacts)
+    /// Oracle price feed reference UTxO (stable deployment artifact).
     oracle_feed_ref: UtxoRef,
+    /// Oracle contract reference UTxO (stable deployment artifact).
     oracle_contract_ref: UtxoRef,
 }
 
@@ -278,10 +281,15 @@ type OracleRedeemer {
 // The datum encodes which tokens the tank owner accepts as payment
 // and the exchange rate (or oracle reference).
 
+/// Create a babel-fee tank by locking ADA at the tank script with an accepted-tokens datum.
 tx create_babel_tank(
+    /// ADA (lovelace) to deposit into the new tank.
     tank_ada: Int,
+    /// Tank owner's payment key hash (28 bytes).
     owner_payment_hash: Bytes,
+    /// Tank owner's stake key hash (28 bytes).
     owner_stake_hash: Bytes,
+    /// Empty byte string placeholder used for unset policy/name fields.
     empty_bytes: Bytes,
 ) {
     input source {
@@ -342,13 +350,21 @@ tx create_babel_tank(
 // The datum specifies: destination, amount, reward, and execution time.
 // No script execution required — simple deposit.
 
+/// Create a scheduled-transaction tank that will pay a destination after a future execution time.
 tx create_scheduled_tank(
+    /// ADA (lovelace) to deposit into the new tank.
     tank_ada: Int,
+    /// Tank owner's payment key hash (28 bytes).
     owner_payment_hash: Bytes,
+    /// Tank owner's stake key hash (28 bytes).
     owner_stake_hash: Bytes,
+    /// Empty byte string placeholder used for unset policy/name fields.
     empty_bytes: Bytes,
+    /// POSIX-time slot at which the scheduled tx becomes executable.
     execution_time: Int,
+    /// ADA (lovelace) to send to the destination when executed.
     scheduled_ada: Int,
+    /// ADA (lovelace) reward paid to the batcher that executes the tx.
     reward_ada: Int,
 ) {
     input source {
@@ -409,7 +425,9 @@ tx create_scheduled_tank(
 // Requires spending from an address where the tank owner's wallet
 // is present in the inputs (must_be_signed_by_user_contract).
 
+/// Withdraw the full balance of a tank back to its owner.
 tx withdraw_tank(
+    /// UTxO reference of the tank to withdraw.
     tank_utxo: UtxoRef,
 ) {
     reference tank_script {
@@ -461,24 +479,42 @@ tx withdraw_tank(
 //
 // The oracle is validated via a withdrawal with 0 ADA.
 
+/// Consume a babel-fee tank using an oracle price feed to pay the user's fees in tokens.
 tx consume_oracle(
+    /// UTxO reference of the tank being consumed.
     tank_utxo: UtxoRef,
+    /// UTxO reference of the oracle provider data (e.g. Charli3).
     oracle_provider_ref: UtxoRef,
+    /// Index of the paying token within the tank's allowed_tokens list.
     paying_token_idx: Int,
+    /// Index of the tank input within tx inputs (sorted).
     input_tank_idx: Int,
+    /// Index of the oracle reference input within reference inputs (sorted).
     oracle_idx: Int,
+    /// Index of the params reference input within reference inputs (sorted).
     ref_params_idx: Int,
+    /// ADA (lovelace) returned to the tank UTxO.
     tank_return_ada: Int,
+    /// ADA (lovelace) paid alongside tokens to the tank owner.
     payment_ada: Int,
+    /// Policy id of the token used to pay the tank owner.
     payment_token_policy: Bytes,
+    /// Asset name of the token used to pay the tank owner.
     payment_token_name: Bytes,
+    /// Quantity of the payment token delivered to the tank owner.
     payment_token_qty: Int,
+    /// ADA (lovelace) delivered to the user's destination output.
     dest_ada: Int,
     // Oracle redeemer params (PriceDataCharlie)
+    /// Charli3 oracle provider index within the price feed.
     oracle_provider_idx: Int,
+    /// Lower bound (slot) of the oracle price validity window.
     oracle_valid_from: Int,
+    /// Upper bound (slot) of the oracle price validity window.
     oracle_valid_to: Int,
+    /// Oracle-quoted price numerator.
     oracle_price: Int,
+    /// Oracle-quoted price denominator.
     oracle_denominator: Int,
 ) {
     locals {
@@ -601,14 +637,23 @@ tx consume_oracle(
 
 // NOTE: On-chain scheduled txs are ADA-only in both dest and reward.
 // For token-bearing scheduled txs, a separate variant would be needed.
+/// Execute a scheduled tank, paying the destination and collecting the batcher reward.
 tx execute_scheduled(
+    /// UTxO reference of the scheduled tank to execute.
     tank_utxo: UtxoRef,
+    /// UTxO reference of the batcher's staker registration.
     staker_ref: UtxoRef,
+    /// Batcher address as CBOR-encoded PlutusAddress (passed through to redeemer).
     batcher_addr_cbor: Bytes,
+    /// Batcher's signer key hash required on the tx.
     batcher_signer_hash: Bytes,
+    /// Index of the staker ref input within reference inputs (sorted).
     ref_staking_idx: Int,
+    /// Index of the params ref input within reference inputs (sorted).
     ref_params_idx: Int,
+    /// ADA (lovelace) delivered to the scheduled destination.
     dest_ada: Int,
+    /// ADA (lovelace) reward paid to the batcher / rewards treasury.
     reward_ada: Int,
 ) {
     validity {
@@ -680,10 +725,15 @@ tx execute_scheduled(
 // User stakes FLDT tokens to register as an Aquarium node.
 // Mints a staker NFT with the bot's stake key hash as asset name.
 
+/// Stake FLDT and mint the staker NFT that registers the caller as an Aquarium node.
 tx stake_fldt(
+    /// Quantity of FLDT tokens to stake.
     stake_amount: Int,
+    /// Staker NFT asset name (typically the bot's stake key hash).
     staker_nft_name: Bytes,
+    /// CBOR-encoded StakerRedeemer used for the mint.
     staker_redeemer_cbor: Bytes,
+    /// Required signer key hash on the tx.
     signer_hash: Bytes,
 ) {
     locals {
