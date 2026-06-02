@@ -272,6 +272,33 @@ type OracleRedeemer {
     signatures: List<OracleSignature>,
 }
 
+// --- Functions ---
+
+// Build a PlutusAddress from a verification-key payment hash and a
+// verification-key stake hash (the common wallet-address shape).
+fn vk_addr(payment_hash: Bytes, stake_hash: Bytes) -> PlutusAddress {
+    PlutusAddress {
+        payment: Credential::VerifKey { hash: payment_hash, },
+        stake: MaybeStakeCred::SomeStake {
+            inline: InlineStake {
+                cred: Credential::VerifKey { hash: stake_hash, },
+            },
+        },
+    }
+}
+
+// Build an ADA-denominated CardanoToken (empty policy/name, 6-decimal
+// divider, no oracle). `empty` is the empty-byte-string placeholder.
+fn ada_token(empty: Bytes, amount: Int) -> CardanoToken {
+    CardanoToken {
+        policy: empty,
+        name: empty,
+        amount: amount,
+        divider: 1000000,
+        oracle: MaybeAsset::NoAsset {},
+    }
+}
+
 // ============================================================
 // 1. CREATE BABEL FEE TANK
 // ============================================================
@@ -302,38 +329,12 @@ tx create_babel_tank(
         amount: Ada(tank_ada),
         datum: TankDatum {
             allowed_tokens: [],
-            tank_owner: PlutusAddress {
-                payment: Credential::VerifKey { hash: owner_payment_hash, },
-                stake: MaybeStakeCred::SomeStake {
-                    inline: InlineStake {
-                        cred: Credential::VerifKey { hash: owner_stake_hash, },
-                    },
-                },
-            },
+            tank_owner: vk_addr(owner_payment_hash, owner_stake_hash),
             whitelisted: [],
             execution_time: 0,
-            destination: PlutusAddress {
-                payment: Credential::VerifKey { hash: owner_payment_hash, },
-                stake: MaybeStakeCred::SomeStake {
-                    inline: InlineStake {
-                        cred: Credential::VerifKey { hash: owner_stake_hash, },
-                    },
-                },
-            },
-            scheduled_amount: CardanoToken {
-                policy: empty_bytes,
-                name: empty_bytes,
-                amount: 0,
-                divider: 1000000,
-                oracle: MaybeAsset::NoAsset {},
-            },
-            reward: CardanoToken {
-                policy: empty_bytes,
-                name: empty_bytes,
-                amount: 0,
-                divider: 1000000,
-                oracle: MaybeAsset::NoAsset {},
-            },
+            destination: vk_addr(owner_payment_hash, owner_stake_hash),
+            scheduled_amount: ada_token(empty_bytes, 0),
+            reward: ada_token(empty_bytes, 0),
         },
     }
 
@@ -377,38 +378,12 @@ tx create_scheduled_tank(
         amount: Ada(tank_ada),
         datum: TankDatum {
             allowed_tokens: [],
-            tank_owner: PlutusAddress {
-                payment: Credential::VerifKey { hash: owner_payment_hash, },
-                stake: MaybeStakeCred::SomeStake {
-                    inline: InlineStake {
-                        cred: Credential::VerifKey { hash: owner_stake_hash, },
-                    },
-                },
-            },
+            tank_owner: vk_addr(owner_payment_hash, owner_stake_hash),
             whitelisted: [],
             execution_time: execution_time,
-            destination: PlutusAddress {
-                payment: Credential::VerifKey { hash: owner_payment_hash, },
-                stake: MaybeStakeCred::SomeStake {
-                    inline: InlineStake {
-                        cred: Credential::VerifKey { hash: owner_stake_hash, },
-                    },
-                },
-            },
-            scheduled_amount: CardanoToken {
-                policy: empty_bytes,
-                name: empty_bytes,
-                amount: scheduled_ada,
-                divider: 1000000,
-                oracle: MaybeAsset::NoAsset {},
-            },
-            reward: CardanoToken {
-                policy: empty_bytes,
-                name: empty_bytes,
-                amount: reward_ada,
-                divider: 1000000,
-                oracle: MaybeAsset::NoAsset {},
-            },
+            destination: vk_addr(owner_payment_hash, owner_stake_hash),
+            scheduled_amount: ada_token(empty_bytes, scheduled_ada),
+            reward: ada_token(empty_bytes, reward_ada),
         },
     }
 
