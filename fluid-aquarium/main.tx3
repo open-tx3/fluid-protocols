@@ -292,12 +292,12 @@ tx create_babel_tank(
     /// Empty byte string placeholder used for unset policy/name fields.
     empty_bytes: Bytes,
 ) {
-    input source {
+    input payment {
         from: User,
         min_amount: Ada(tank_ada) + fees,
     }
 
-    output {
+    output tank {
         to: TankUserAddr,
         amount: Ada(tank_ada),
         datum: TankDatum {
@@ -337,9 +337,9 @@ tx create_babel_tank(
         },
     }
 
-    output {
+    output change {
         to: User,
-        amount: source - Ada(tank_ada) - fees,
+        amount: payment - Ada(tank_ada) - fees,
     }
 }
 
@@ -367,12 +367,12 @@ tx create_scheduled_tank(
     /// ADA (lovelace) reward paid to the batcher that executes the tx.
     reward_ada: Int,
 ) {
-    input source {
+    input payment {
         from: User,
         min_amount: Ada(tank_ada) + fees,
     }
 
-    output {
+    output tank {
         to: TankUserAddr,
         amount: Ada(tank_ada),
         datum: TankDatum {
@@ -412,9 +412,9 @@ tx create_scheduled_tank(
         },
     }
 
-    output {
+    output change {
         to: User,
-        amount: source - Ada(tank_ada) - fees,
+        amount: payment - Ada(tank_ada) - fees,
     }
 }
 
@@ -438,7 +438,7 @@ tx withdraw_tank(
         ref: params_ref,
     }
 
-    input tank_input {
+    input tank {
         ref: tank_utxo,
         redeemer: TankRedeemer::WithdrawTank {},
     }
@@ -449,9 +449,9 @@ tx withdraw_tank(
         min_amount: Ada(5000000) + fees,
     }
 
-    output {
+    output change {
         to: User,
-        amount: tank_input + owner_proof - fees,
+        amount: tank + owner_proof - fees,
     }
 
     collateral {
@@ -547,7 +547,7 @@ tx consume_oracle(
     }
 
     // Consume the tank UTxO
-    input tank_input {
+    input tank {
         ref: tank_utxo,
         redeemer: TankRedeemer::ConsumeOracle {
             paying_token_idx: paying_token_idx,
@@ -560,34 +560,34 @@ tx consume_oracle(
     }
 
     // User wallet input (provides tokens for payment + collateral)
-    input user_input {
+    input payment {
         from: User,
         min_amount: Ada(dest_ada) + payment_token + fees,
     }
 
     // Return remaining ADA to the tank (same address, same datum)
-    output {
+    output tank_return {
         to: TankUserAddr,
         amount: Ada(tank_return_ada),
-        datum: tank_input,
+        datum: tank,
     }
 
     // Payment to tank owner (tokens at oracle rate)
-    output {
+    output owner_payment {
         to: User,
         amount: Ada(payment_ada) + payment_token,
     }
 
     // User destination output (the actual tx the user wanted)
-    output {
+    output destination {
         to: User,
         amount: Ada(dest_ada),
     }
 
     // User change
-    output {
+    output change {
         to: User,
-        amount: user_input - Ada(dest_ada) - payment_token - fees,
+        amount: payment - Ada(dest_ada) - payment_token - fees,
     }
 
     // Oracle validation via withdrawal (0 ADA)
@@ -674,7 +674,7 @@ tx execute_scheduled(
     }
 
     // Consume the scheduled tank UTxO
-    input tank_input {
+    input tank {
         ref: tank_utxo,
         redeemer: TankRedeemer::ScheduledTx {
             input_tank_idx: 0,
@@ -686,27 +686,27 @@ tx execute_scheduled(
     }
 
     // Batcher wallet (covers fees)
-    input batcher_input {
+    input batcher {
         from: Batcher,
         min_amount: Ada(5000000) + fees,
     }
 
     // Scheduled payment to destination
-    output {
+    output destination {
         to: User,
         amount: Ada(dest_ada),
     }
 
     // Reward to treasury
-    output {
+    output reward {
         to: RewardsAddr,
         amount: Ada(reward_ada),
     }
 
     // Batcher change
-    output {
+    output change {
         to: Batcher,
-        amount: batcher_input - fees,
+        amount: batcher - fees,
     }
 
     collateral {
@@ -745,21 +745,21 @@ tx stake_fldt(
         ref: params_ref,
     }
 
-    input source {
+    input payment {
         from: User,
         min_amount: Ada(2000000) + fldt_tokens + fees,
     }
 
     // Staker output: FLDT + staker NFT at staker contract address
-    output {
+    output stake {
         to: TankUserAddr,
         amount: Ada(1456780) + fldt_tokens + staker_nft,
     }
 
     // User change
-    output {
+    output change {
         to: User,
-        amount: source - Ada(1456780) - fldt_tokens - staker_nft - fees,
+        amount: payment - Ada(1456780) - fldt_tokens - staker_nft - fees,
     }
 
     // Mint the staker NFT
