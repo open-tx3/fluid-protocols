@@ -3,6 +3,12 @@
     "tankuseraddr": "addr1zxawwulvmw4mw3kjmntazcc22as3szcewe5q8w9xt7jjjqtvpx5m854eg3jzke9xuv0fkjr32hrnhpdweumq2kfxth0qg62m0m",
     "stake_amount": 30000000000,
     "staker_nft_name": "099ca684ed63102d8495f7c71d10bcc8eff1a4357e8c7955f26c92f8",
-    "staker_redeemer_cbor": "d87985d87982d87981581c60fdb6f77513a351958197d826965f116aa83fc572a244b97ad4885bd87981d87981d87981581c6c09a9b3d2b944642b64a6e31e9b487155c73b85aecf360559265dded87982d87981581ce22b767109bb46668f01089041cf684b4735bb61a4ab7c140daead99d87981d87981d87981581c099ca684ed63102d8495f7c71d10bcc8eff1a4357e8c7955f26c92f8000001",
+    "owner_payment_hash": "60fdb6f77513a351958197d826965f116aa83fc572a244b97ad4885b",
+    "owner_stake_hash": "6c09a9b3d2b944642b64a6e31e9b487155c73b85aecf360559265dde",
+    "signer_bot_payment_hash": "e22b767109bb46668f01089041cf684b4735bb61a4ab7c140daead99",
+    "signer_bot_stake_hash": "099ca684ed63102d8495f7c71d10bcc8eff1a4357e8c7955f26c92f8",
+    "ref_index": 0,
+    "output_staking": 0,
+    "staking_inputs": 1,
     "signer_hash": "6c09a9b3d2b944642b64a6e31e9b487155c73b85aecf360559265dde"
 }
