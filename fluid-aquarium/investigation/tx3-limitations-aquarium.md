@@ -62,22 +62,33 @@ With a working `datum_is`, 4 more params could be eliminated: `oracle_price`, `o
 
 ## Active Limitations (impact on production use)
 
-### 3. Custom Types Cannot Be Passed as Parameters
+### 3. Custom Types Cannot Be Passed as Parameters — ✅ RESOLVED (tx3 0.23, #343)
+
+> **Resolved 2026-06-23.** Self-describing argument values ([tx3#343](https://github.com/tx3-lang/tx3/pull/343))
+> let structs/enums/lists be passed/constructed as params. All raw-CBOR workarounds are gone: the tank
+> datum, the `ScheduledTx` `batcher` (`PlutusAddress`), and the `StakerRedeemer` are built inline from typed
+> params via `fn owner_address`. The reconstructed `StakerRedeemer` CBOR is byte-identical to the old hand-CBOR.
 
 Same as quirk #6 in `tx3-quirks.md`. The `Bytes` type wraps values as CBOR ByteString, not raw Plutus Data.
 
-**Impact on Aquarium:**
+**Impact on Aquarium (historical):**
 - `execute_scheduled`: The `batcher` field in the `ScheduledTx` redeemer expects an on-chain `Address` type (Constr with payment/stake credentials). Passing it as `Bytes` produces a ByteString wrapper instead.
 
-**Workaround applied:** Pass `"00"` placeholder for `batcher_addr_cbor`. For production, the caller must construct the full redeemer CBOR externally.
+**Old workaround (removed):** Pass `"00"` placeholder for `batcher_addr_cbor`. Now built inline as a real `PlutusAddress` from `batcher_payment_hash`/`batcher_stake_hash`.
 
-### 4. List Values Cannot Be Passed as Invoke Parameters
+### 4. List Values Cannot Be Passed as Invoke Parameters — ✅ RESOLVED (tx3 0.23, #343)
 
-`List<T>` works correctly in type definitions and as hardcoded literals (e.g., `[]`). However, list values **cannot be passed as JSON invoke args**. The `from_json()` resolver only supports Int, Bool, Bytes, Address, and UtxoRef.
+> **Resolved 2026-06-23.** `signatures` is now a real `List<OracleSignature>` param. A top-level list
+> arg is a plain JSON array (`[]`), **not** the tagged `{"list":[]}` form (that fails live-resolve with
+> `expected array for a 'list' argument, got 'object'`). It is surfaced in the TII as an `array` of
+> `components.schemas.OracleSignature`. Empty for the Charli3 case, but populatable for the
+> signature-bearing feed variants.
 
-**Impact on Aquarium:** The `signatures` field of `OracleRedeemer` is `List<OracleSignature>`. Since PriceDataCharlie txs on-chain use 0 signatures, the empty list `[]` is hardcoded in the tx3 source. If a variant required non-empty signatures, they could not be passed dynamically.
+`List<T>` works correctly in type definitions and as hardcoded literals (e.g., `[]`). Before #343, list values **could not be passed as JSON invoke args** — the `from_json()` resolver only supported Int, Bool, Bytes, Address, and UtxoRef.
 
-**Workaround applied:** Hardcoded `[]` in tx source. Works for the PriceDataCharlie case.
+**Impact on Aquarium (historical):** The `signatures` field of `OracleRedeemer` is `List<OracleSignature>`. Since PriceDataCharlie txs on-chain use 0 signatures, the empty list `[]` was hardcoded in the tx3 source.
+
+**Old workaround (removed):** Hardcoded `[]` in tx source. Now a caller-provided param.
 
 ### 5. Signers Extracts Payment Key — Some Validators Need Staking Key
 

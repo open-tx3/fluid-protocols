@@ -4,7 +4,6 @@
     "tank_ada": 4000000,
     "owner_payment_hash": "f07250ea11613cf51ecfa8682f637ff3b78b59575645be004eba613e",
     "owner_stake_hash": "0423617a8e4bb22b1b1b4142399e016e322464df0d03994d034fd6f2",
-    "empty_bytes": "",
     "execution_time": 1742770540416,
     "scheduled_ada": 2000000,
     "reward_ada": 1000000
